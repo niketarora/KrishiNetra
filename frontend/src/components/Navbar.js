@@ -4,6 +4,7 @@ import { Satellite, BarChart, Shield, Sprout, Translate } from "./icons";
 const NAV = [
   { key: "home", label: "Home" },
   { key: "gis", label: "GIS Map" },
+  { key: "marketplace", label: "Marketplace" },
 ];
 
 const PERSONAS = [
@@ -30,20 +31,41 @@ export default function Navbar({ view, setView, lang, setLang, onOpenVoice }) {
         </button>
 
         {/* Center nav */}
-        <nav className="hidden md:flex items-center gap-1 mx-auto">
-          {NAV.map((n) => (
-            <button
-              key={n.key}
-              onClick={() => setView(n.key)}
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                view === n.key
-                  ? "bg-forest-800 text-white"
-                  : "text-slate-600 hover:bg-slate-100"
-              }`}
-            >
-              {n.label}
-            </button>
-          ))}
+        <nav className="hidden md:flex items-center gap-2 mx-auto">
+          {NAV.map((n) => {
+            if (n.key === "marketplace") {
+              const active = view === "marketplace";
+              return (
+                <button
+                  key={n.key}
+                  onClick={() => setView(n.key)}
+                  className={`px-4 py-2 rounded-lg text-sm font-semibold transition-colors flex items-center gap-1.5 ${
+                    active
+                      ? "bg-[#34D399] text-[#0C1324] font-bold"
+                      : "bg-[#e6f4ed] text-forest-700 hover:bg-[#34D399] hover:text-[#0C1324]"
+                  }`}
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 21v-7.5a.75.75 0 0 1 .75-.75h3a.75.75 0 0 1 .75.75V21m-4.5 0H2.36m11.14 0H18m0 0h3.64m-1.39 0V9.349m-16.5 11.65V9.35m0 0a3.001 3.001 0 0 0 3.75-.615A2.993 2.993 0 0 0 9.75 9.75c.896 0 1.7-.393 2.25-1.016a2.993 2.993 0 0 0 2.25 1.016c.896 0 1.7-.393 2.25-1.015a3.001 3.001 0 0 0 3.75.614m-16.5 0a3.004 3.004 0 0 1-.621-4.72l1.189-1.19A1.5 1.5 0 0 1 5.378 3h13.243a1.5 1.5 0 0 1 1.06.44l1.19 1.189a3 3 0 0 1-.621 4.72M6.75 18h3.5a.75.75 0 0 0 .75-.75V14a.75.75 0 0 0-.75-.75h-3.5A.75.75 0 0 0 6 14v3.25c0 .414.336.75.75.75Z" />
+                  </svg>
+                  {n.label}
+                </button>
+              );
+            }
+            return (
+              <button
+                key={n.key}
+                onClick={() => setView(n.key)}
+                className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                  view === n.key
+                    ? "bg-forest-800 text-white"
+                    : "text-slate-600 hover:bg-slate-100"
+                }`}
+              >
+                {n.label}
+              </button>
+            );
+          })}
         </nav>
 
         {/* Persona toggle */}

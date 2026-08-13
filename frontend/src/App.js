@@ -8,6 +8,7 @@ import AdminDashboard from "./components/AdminDashboard";
 import LeafLoader from "./components/LeafLoader";
 import VoiceAssistantModal from "./components/VoiceAssistantModal";
 import VoiceTriggerButton from "./components/VoiceTriggerButton";
+import Marketplace from "./components/Marketplace";
 
 const LOADER_LABELS = {
   home: "Loading…",
@@ -15,6 +16,7 @@ const LOADER_LABELS = {
   farmer: "Loading farm…",
   officer: "Loading analytics…",
   admin: "Loading console…",
+  marketplace: "Loading marketplace…",
 };
 
 export default function App() {
@@ -51,6 +53,9 @@ export default function App() {
       {view === "farmer" && <FarmerDashboard lang={lang} query={query} />}
       {view === "officer" && <OfficerDashboard />}
       {view === "admin" && <AdminDashboard />}
+      {view === "marketplace" && (
+        <Marketplace setView={go} query={query} setQuery={setQuery} lang={lang} />
+      )}
 
       {/* Floating Voice AI Launcher Button */}
       <VoiceTriggerButton onClick={() => setIsVoiceOpen(true)} lang={lang} />
