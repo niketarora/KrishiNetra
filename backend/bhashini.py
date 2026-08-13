@@ -1,15 +1,16 @@
 import os
 import base64
-import requests
+import urllib.request
+import urllib.error
+import json
 import logging
 
 logger = logging.getLogger("bhashini")
 
 class BhashiniClient:
     """
-    Bhashini API integration client for ASR, Translation, and TTS.
-    If environment credentials are not set, it gracefully falls back to mock responses
-    so the local server is always runnable and never crashes.
+    Bhashini API integration client using Python standard library (urllib)
+    for zero extra dependencies, ensuring absolute offline/local safety.
     """
     def __init__(self):
         self.user_id = os.getenv("BHASHINI_USER_ID")
@@ -37,7 +38,6 @@ class BhashiniClient:
         """Converts base64 encoded audio bytes into text using Bhashini ASR."""
         if not self.is_configured():
             logger.warning("Bhashini ASR: Credentials not configured. Falling back to default transcript.")
-            # Default query fallback
             return "मिट्टी में नमी कैसी है और पानी कब देना है"
 
         try:
@@ -46,14 +46,17 @@ class BhashiniClient:
                 "pipelineTasks": [{"taskType": "asr"}],
                 "pipelineRequestConfig": {"pipelineId": "64392f96daac500b55c543cd"}
             }
-            res = requests.post(
+            
+            headers = self.get_headers(is_inference=False)
+            req = urllib.request.Request(
                 f"{self.auth_url}/ulca/apis/v0/model/getModelsPipeline",
-                json=config_payload,
-                headers=self.get_headers(is_inference=False),
-                timeout=5
+                data=json.dumps(config_payload).encode("utf-8"),
+                headers=headers,
+                method="POST"
             )
-            res.raise_for_status()
-            pipeline_data = res.json()
+            
+            with urllib.request.urlopen(req, timeout=5) as resp:
+                pipeline_data = json.loads(resp.read().decode("utf-8"))
 
             # Find matching service ID for target language
             service_id = None
@@ -67,7 +70,6 @@ class BhashiniClient:
                             break
             
             if not service_id:
-                # Use default fallback model ID if language match failed
                 service_id = "ai4bharat/conformer-hi-gpu--t4" if language == "hi" else "ai4bharat/conformer-en-gpu--t4"
 
             # 2. Perform Inference
@@ -94,14 +96,16 @@ class BhashiniClient:
                 }
             }
 
-            res = requests.post(
+            inf_headers = self.get_headers(is_inference=True)
+            inf_req = urllib.request.Request(
                 self.inference_url,
-                json=inference_payload,
-                headers=self.get_headers(is_inference=True),
-                timeout=10
+                data=json.dumps(inference_payload).encode("utf-8"),
+                headers=inf_headers,
+                method="POST"
             )
-            res.raise_for_status()
-            inference_data = res.json()
+            
+            with urllib.request.urlopen(inf_req, timeout=10) as inf_resp:
+                inference_data = json.loads(inf_resp.read().decode("utf-8"))
 
             # Parse transcript output
             output_list = inference_data.get("pipelineResponse", [])
@@ -129,14 +133,17 @@ class BhashiniClient:
                 "pipelineTasks": [{"taskType": "tts"}],
                 "pipelineRequestConfig": {"pipelineId": "64392f96daac500b55c543cd"}
             }
-            res = requests.post(
+            
+            headers = self.get_headers(is_inference=False)
+            req = urllib.request.Request(
                 f"{self.auth_url}/ulca/apis/v0/model/getModelsPipeline",
-                json=config_payload,
-                headers=self.get_headers(is_inference=False),
-                timeout=5
+                data=json.dumps(config_payload).encode("utf-8"),
+                headers=headers,
+                method="POST"
             )
-            res.raise_for_status()
-            pipeline_data = res.json()
+            
+            with urllib.request.urlopen(req, timeout=5) as resp:
+                pipeline_data = json.loads(resp.read().decode("utf-8"))
 
             # Find matching service ID for target language and voice type
             service_id = None
@@ -175,14 +182,16 @@ class BhashiniClient:
                 }
             }
 
-            res = requests.post(
+            inf_headers = self.get_headers(is_inference=True)
+            inf_req = urllib.request.Request(
                 self.inference_url,
-                json=inference_payload,
-                headers=self.get_headers(is_inference=True),
-                timeout=10
+                data=json.dumps(inference_payload).encode("utf-8"),
+                headers=inf_headers,
+                method="POST"
             )
-            res.raise_for_status()
-            inference_data = res.json()
+            
+            with urllib.request.urlopen(inf_req, timeout=10) as inf_resp:
+                inference_data = json.loads(inf_resp.read().decode("utf-8"))
 
             # Parse TTS output
             output_list = inference_data.get("pipelineResponse", [])
