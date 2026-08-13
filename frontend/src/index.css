@@ -1,0 +1,98 @@
+@import "leaflet/dist/leaflet.css";
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --forest: #15603b;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: "Inter", system-ui, sans-serif;
+  background-color: #f5f8f6;
+  color: #0d1b14;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, .font-display {
+  font-family: "Sora", system-ui, sans-serif;
+}
+
+.tracking-label {
+  letter-spacing: 0.18em;
+}
+
+.leaflet-container {
+  font-family: "Inter", sans-serif;
+}
+
+/* Thin custom scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-thumb {
+  background: #cbd8d0;
+  border-radius: 8px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #aebfb4;
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.animate-fadeUp {
+  animation: fadeUp 0.5s ease both;
+}
+
+/* Leaf loader */
+@keyframes leafPulse {
+  0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.8; }
+  50%      { transform: translate(-50%, -50%) scale(1.35); opacity: 1; }
+}
+@keyframes leafSway {
+  0%, 100% { transform: rotate(-10deg); }
+  50%      { transform: rotate(10deg); }
+}
+@keyframes fadeOverlay {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* Voice Assistant animations from UI Design */
+.pulse-ring {
+  animation: pulse-ring 2s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
+}
+
+@keyframes pulse-ring {
+  0% {
+    transform: scale(0.8);
+    opacity: 0.6;
+  }
+  100% {
+    transform: scale(2.2);
+    opacity: 0;
+  }
+}
+
+@keyframes avatarGlow {
+  0%, 100% {
+    box-shadow: 0 0 25px rgba(52, 211, 153, 0.2);
+  }
+  50% {
+    box-shadow: 0 0 50px rgba(52, 211, 153, 0.5);
+  }
+}
+
+.avatar-active {
+  animation: avatarGlow 2s infinite ease-in-out;
+}
+
