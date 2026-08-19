@@ -1,10 +1,33 @@
 __pycache__/
 *.pyc
+*.pyo
+*.pyd
 
+# Virtual environments
+.venv/
+venv/
+ENV/
+env/
+
+# Data and Models output if large/temporary
 /data/
 
+# Environment files
 .env
+.env.local
+.env.*.local
 
+# IDE and OS
 .vscode/
+.idea/
+.DS_Store
+Thumbs.db
+*.log
 
-.ipynb_checkpoints/
+# Frontend build & dependencies
+frontend/node_modules/
+frontend/build/
+.vercel/
+
+# Jupyter
+.ipynb_checkpoints/
