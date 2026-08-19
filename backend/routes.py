@@ -5,7 +5,7 @@ from typing import Optional
 from backend.schemas import FieldRequest, PredictionResponse
 from backend.voice_schemas import VoiceQueryRequest, VoiceQueryResponse
 from backend.voice_orchestrator import process_voice_query_text
-from backend.bhashini import bhashini_client
+from backend.sarvam import sarvam_client
 from models.advisor import smart_advisor
 
 router = APIRouter()
@@ -26,9 +26,9 @@ def voice_text_query(request: VoiceQueryRequest):
         field_id=request.field_id or "P0001",
         lang=lang
     )
-    # Generate TTS audio if Bhashini credentials are configured
-    if bhashini_client.is_configured() and res.get("response"):
-        res["audio_base64"] = bhashini_client.text_to_speech(res["response"], language=lang)
+    # Generate TTS audio via Sarvam AI Bulbul TTS
+    if sarvam_client.is_configured() and res.get("response"):
+        res["audio_base64"] = sarvam_client.text_to_speech(res["response"], language=lang)
     return res
 
 
@@ -43,12 +43,12 @@ async def voice_audio_query(
     lang = language or "hi"
     query_text = transcript if transcript else ""
     
-    # If binary audio file is uploaded, convert to text via Bhashini ASR
+    # If binary audio file is uploaded, convert to text via Sarvam AI Saaras STT
     if audio:
         audio_bytes = await audio.read()
         if len(audio_bytes) > 0 and not query_text:
-            audio_base64 = base64.b64encode(audio_bytes).decode("utf-8")
-            query_text = bhashini_client.speech_to_text(audio_base64, language=lang)
+            filename = audio.filename or "recording.wav"
+            query_text = sarvam_client.speech_to_text(audio_bytes, language=lang, filename=filename)
 
     if not query_text:
         query_text = "Mere khet mein paani kab dena hai?"
@@ -59,9 +59,9 @@ async def voice_audio_query(
         lang=lang
     )
 
-    # Generate TTS audio if Bhashini credentials are configured
-    if bhashini_client.is_configured() and res.get("response"):
-        res["audio_base64"] = bhashini_client.text_to_speech(res["response"], language=lang)
+    # Generate TTS audio via Sarvam AI Bulbul TTS
+    if sarvam_client.is_configured() and res.get("response"):
+        res["audio_base64"] = sarvam_client.text_to_speech(res["response"], language=lang)
         
     return res
 

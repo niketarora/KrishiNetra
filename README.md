@@ -13,7 +13,7 @@ ISRO-Smart-Farming/
 │   ├── app.py          App + CORS + Static mounts
 │   ├── routes.py       POST /predict & Voice AI endpoints
 │   ├── voice_orchestrator.py  Voice AI agent tool router
-│   └── bhashini.py     Bhashini ASR/TTS client
+│   └── sarvam.py       Sarvam AI Saaras STT & Bulbul TTS client
 ├── models/         ML & Analytics core
 │   ├── loader.py           Load Sentinel .npy + metadata
 │   ├── feature_extractor.py  Band statistics
