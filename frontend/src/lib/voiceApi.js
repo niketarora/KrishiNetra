@@ -21,16 +21,16 @@ export async function sendVoiceTextQuery({ text, fieldId = "P0001", language = "
     );
     return data;
   } catch (err) {
-    // Fallback response for offline or mock mode
+    // Fallback response for offline or network issues
     const isHi = language === "hi";
     return {
       success: true,
       transcript: text,
       response: isHi
-        ? `फ़ील्ड ${fieldId} के लिए: मिट्टी में नमी 58.4% (सामान्य) है। वर्तमान में तुरंत सिंचाई की आवश्यकता नहीं है।`
-        : `For field ${fieldId}: Soil moisture is 58.4% (Normal). Immediate irrigation is not required.`,
+        ? "नमस्ते! सर्वर से कनेक्ट करने में कुछ समय लग रहा है। आप मौसम, मिट्टी की नमी, या फसल सलाह के बारे में दोबारा पूछ सकते हैं।"
+        : "Hello! There was a connection delay. You can ask again about field weather, soil moisture, or crop advice.",
       language: language,
-      tool_used: "get_irrigation_advisory",
+      tool_used: "direct_knowledge",
       session_id: sessionId,
       field_id: fieldId,
       telemetry: { total_latency_ms: 250 },
@@ -45,12 +45,16 @@ export async function sendVoiceAudioQuery(formData) {
     });
     return data;
   } catch (err) {
+    const lang = formData.get("language") || "hi";
+    const isHi = lang === "hi";
     return {
       success: true,
-      transcript: "Mitti mein nami kaisi hai?",
-      response: "फ़ील्ड P0001 में मिट्टी की नमी 58.4% है। उपग्रह विश्लेषण के अनुसार फसल स्वस्थ है।",
-      language: "hi",
-      tool_used: "get_moisture_status",
+      transcript: isHi ? "मेरी आवाज रिकॉर्ड हुई" : "Audio recorded",
+      response: isHi
+        ? "माफ़ कीजिए, सर्वर से संपर्क नहीं हो पाया। कृपया पुनः बोलें या टेक्स्ट में लिखें।"
+        : "Sorry, could not connect to the voice assistant. Please try speaking again or typing your query.",
+      language: lang,
+      tool_used: "direct_knowledge",
       telemetry: { total_latency_ms: 300 },
     };
   }

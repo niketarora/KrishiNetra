@@ -113,9 +113,9 @@ def process_voice_query(
     # 2. Context Retrieval
     context = session.get_prompt_context()
 
-    # 3. Gemini 2.5 Flash Tool Router & Entity Extraction
+    # 3. Intelligent Gemini Intent & Knowledge Routing / Direct LLM Synthesis
     router_start = time.time()
-    raw_tool_name, raw_tool_args = gemini_service.route_voice_query(
+    route_res = gemini_service.route_and_process_query(
         transcript=transcript,
         context=context,
         field_id=field_id,
@@ -123,33 +123,60 @@ def process_voice_query(
     )
     gemini_router_latency_ms = int((time.time() - router_start) * 1000)
 
-    # 4. Backend Validation & Field Authorization
-    is_valid, tool_name, sanitized_args, auth_err = validate_and_authorize_tool_call(
-        tool_name=raw_tool_name,
-        args=raw_tool_args,
-        session_field_id=field_id
-    )
-    effective_field_id = sanitized_args.get("field_id", field_id)
+    mode = route_res.get("mode", "direct")
+    raw_tool_name = route_res.get("tool_name")
+    raw_tool_args = route_res.get("tool_args", {})
+    direct_response = route_res.get("direct_response")
 
-    # 5. Verified KrishiNetra Tool Execution
-    tool_start = time.time()
-    tool_result = execute_tool(
-        tool_name=tool_name,
-        field_id=effective_field_id,
-        extra_args=sanitized_args
-    )
-    tool_latency_ms = int((time.time() - tool_start) * 1000)
+    tool_result = {}
+    effective_field_id = field_id
+    tool_used = "direct_knowledge"
+    response_text = ""
 
-    # 6. Gemini 2.5 Flash Grounded Response Synthesis
-    gen_start = time.time()
-    response_text = gemini_service.generate_farmer_response(
-        question=transcript,
-        tool_name=tool_name,
-        tool_data=tool_result,
-        language=language,
-        context=context
-    )
-    gemini_response_latency_ms = int((time.time() - gen_start) * 1000)
+    if mode == "tool" and raw_tool_name:
+        # 4. Backend Validation & Field Authorization
+        is_valid, tool_name, sanitized_args, auth_err = validate_and_authorize_tool_call(
+            tool_name=raw_tool_name,
+            args=raw_tool_args,
+            session_field_id=field_id
+        )
+        effective_field_id = sanitized_args.get("field_id", field_id)
+
+        # 5. Verified KrishiNetra Tool Execution
+        tool_start = time.time()
+        tool_result = execute_tool(
+            tool_name=tool_name,
+            field_id=effective_field_id,
+            extra_args=sanitized_args
+        )
+        tool_latency_ms = int((time.time() - tool_start) * 1000)
+
+        # 6. Gemini Grounded Response Synthesis
+        gen_start = time.time()
+        response_text = gemini_service.generate_farmer_response(
+            question=transcript,
+            tool_name=tool_name,
+            tool_data=tool_result,
+            language=language,
+            context=context
+        )
+        gemini_response_latency_ms = int((time.time() - gen_start) * 1000)
+        tool_used = tool_name
+    else:
+        # Direct Agricultural & Conversational Knowledge Response
+        tool_latency_ms = 0
+        tool_used = "direct_knowledge"
+        if direct_response and len(direct_response.strip()) > 3:
+            response_text = direct_response.strip()
+            gemini_response_latency_ms = 0
+        else:
+            gen_start = time.time()
+            response_text = gemini_service.generate_direct_response(
+                question=transcript,
+                language=language,
+                context=context
+            )
+            gemini_response_latency_ms = int((time.time() - gen_start) * 1000)
 
     # 7. Text-to-Speech via Sarvam Bulbul v2
     tts_start = time.time()
@@ -168,8 +195,8 @@ def process_voice_query(
     session.add_turn(
         user_text=transcript,
         assistant_text=response_text,
-        intent=tool_name,
-        tool_name=tool_name,
+        intent=tool_used,
+        tool_name=tool_used,
         tool_result=tool_result.get("data")
     )
 
@@ -185,7 +212,7 @@ def process_voice_query(
     }
 
     logger.info(
-        f"Voice Query completed: intent={tool_name}, field={effective_field_id}, "
+        f"Voice Query completed: intent={tool_used}, field={effective_field_id}, "
         f"total={total_latency_ms}ms (STT={stt_latency_ms}ms, Router={gemini_router_latency_ms}ms, "
         f"Tool={tool_latency_ms}ms, Gen={gemini_response_latency_ms}ms, TTS={tts_latency_ms}ms)"
     )
@@ -195,7 +222,7 @@ def process_voice_query(
         "transcript": transcript,
         "response": response_text,
         "language": language,
-        "tool_used": tool_name,
+        "tool_used": tool_used,
         "field_id": effective_field_id,
         "data": tool_result.get("data", {}),
         "audio_base64": audio_base64,

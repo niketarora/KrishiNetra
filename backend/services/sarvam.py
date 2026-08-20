@@ -104,25 +104,32 @@ class SarvamClient:
             elif filename.endswith(".ogg"):
                 content_type = "audio/ogg"
 
-            files = {
-                "file": (filename, audio_bytes, content_type)
-            }
-            data = {
-                "model": model,
-                "language_code": lang_code
-            }
             headers = {
                 "api-subscription-key": self.api_key.strip()
             }
 
-            resp = self.session.post(url, files=files, data=data, headers=headers, timeout=25)
-            if resp.status_code == 200:
-                resp_json = resp.json()
-                transcript = resp_json.get("transcript", "")
-                if transcript:
-                    return transcript.strip()
-            else:
-                logger.error(f"Sarvam STT HTTP {resp.status_code}: {resp.text}")
+            # Try primary model and fallback to v2.5 if primary returns error
+            candidate_models = [model, "saaras:v2.5", "saaras:v1"] if model == "saaras:v3" else [model, "saaras:v3"]
+            
+            for mod in candidate_models:
+                files = {
+                    "file": (filename, audio_bytes, content_type)
+                }
+                data = {
+                    "model": mod,
+                    "language_code": lang_code
+                }
+                try:
+                    resp = self.session.post(url, files=files, data=data, headers=headers, timeout=20)
+                    if resp.status_code == 200:
+                        resp_json = resp.json()
+                        transcript = resp_json.get("transcript", "")
+                        if transcript:
+                            return transcript.strip()
+                    else:
+                        logger.warning(f"Sarvam STT model {mod} returned HTTP {resp.status_code}: {resp.text}")
+                except Exception as ex:
+                    logger.warning(f"Sarvam STT attempt {mod} failed: {ex}")
 
             return ""
 

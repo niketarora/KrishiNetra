@@ -164,9 +164,9 @@ export default function VoiceAssistantModal({ isOpen, onClose, fieldId = "P0001"
         id: userMsgId + 1,
         type: "assistant",
         text: isHi
-          ? `फ़ील्ड ${fieldId} के लिए: मिट्टी की नमी 58.4% (सामान्य) है। फिलहाल सिंचाई की आवश्यकता नहीं है।`
-          : `For field ${fieldId}: Soil moisture is 58.4% (Normal). No immediate irrigation needed.`,
-        tool: "GET_MOISTURE_STATUS",
+          ? "माफ़ कीजिए, सर्वर से संपर्क नहीं हो सका। कृपया अपना नेटवर्क कनेक्शन जांचें और पुनः प्रयास करें।"
+          : "Sorry, unable to connect to the assistant server. Please check your network and try again.",
+        tool: "SYSTEM_NOTIFICATION",
         time: formatTime(),
       };
       setMessages([userMsg, fallbackMsg]);
