@@ -39,9 +39,15 @@ export async function fetchParcel(query) {
   }
 
   try {
-    const { data } = await axios.post(`${API_URL}/predict`, {
-      field_id: toBackendId(base.id),
-    });
+    const { data } = await axios.post(
+      `${API_URL}/predict`,
+      {
+        field_id: toBackendId(base.id),
+      },
+      {
+        headers: { "Bypass-Tunnel-Reminder": "true" },
+      }
+    );
     // Use the real farm coordinates so the map zooms to the actual parcel.
     const lat = data.latitude ?? base.lat;
     const lon = data.longitude ?? base.lon;

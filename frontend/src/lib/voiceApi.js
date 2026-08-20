@@ -2,15 +2,23 @@ import axios from "axios";
 
 const API_URL = process.env.REACT_APP_BACKEND_URL || "http://localhost:8000";
 
+const defaultHeaders = {
+  "Bypass-Tunnel-Reminder": "true",
+};
+
 // Voice AI Agent API calls
 export async function sendVoiceTextQuery({ text, fieldId = "P0001", language = "hi", sessionId = "session-001" }) {
   try {
-    const { data } = await axios.post(`${API_URL}/api/voice/text-query`, {
-      text,
-      field_id: fieldId,
-      language: language,
-      session_id: sessionId,
-    });
+    const { data } = await axios.post(
+      `${API_URL}/api/voice/text-query`,
+      {
+        text,
+        field_id: fieldId,
+        language: language,
+        session_id: sessionId,
+      },
+      { headers: defaultHeaders }
+    );
     return data;
   } catch (err) {
     // Fallback response for offline or mock mode
@@ -33,7 +41,7 @@ export async function sendVoiceTextQuery({ text, fieldId = "P0001", language = "
 export async function sendVoiceAudioQuery(formData) {
   try {
     const { data } = await axios.post(`${API_URL}/api/voice/query`, formData, {
-      headers: { "Content-Type": "multipart/form-data" },
+      headers: { "Content-Type": "multipart/form-data", ...defaultHeaders },
     });
     return data;
   } catch (err) {
