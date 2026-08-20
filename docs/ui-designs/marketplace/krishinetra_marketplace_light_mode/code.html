@@ -1,0 +1,322 @@
+<!DOCTYPE html><html class="light" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>KrishiNetra - Marketplace</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700&amp;family=Inter:wght@400;600&amp;family=JetBrains+Mono:wght@500&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-tertiary-fixed": "#311300",
+                        "surface-variant": "#e0e3e5",
+                        "surface-container-highest": "#e0e3e5",
+                        "surface-container": "#eceef0",
+                        "surface-dim": "#d8dadc",
+                        "surface-container-low": "#f2f4f6",
+                        "tertiary-fixed": "#ffdcc7",
+                        "on-primary-fixed-variant": "#005137",
+                        "on-surface-variant": "#3c4a42",
+                        "on-error-container": "#93000a",
+                        "border-base": "#E2E8F0",
+                        "secondary": "#575e72",
+                        "on-secondary": "#ffffff",
+                        "on-secondary-fixed": "#141b2c",
+                        "on-primary-fixed": "#002114",
+                        "secondary-fixed": "#dce2fa",
+                        "surface-container-lowest": "#ffffff",
+                        "primary-container": "#34d399",
+                        "surface-container-high": "#e6e8ea",
+                        "on-tertiary-fixed-variant": "#723600",
+                        "background": "#f7f9fb",
+                        "error-container": "#ffdad6",
+                        "on-primary": "#ffffff",
+                        "primary": "#006c4b",
+                        "outline-variant": "#bbcac0",
+                        "secondary-fixed-dim": "#c0c6dd",
+                        "on-secondary-container": "#5c6277",
+                        "primary-fixed-dim": "#45dfa4",
+                        "border-muted": "#F1F5F9",
+                        "surface-tint": "#006c4b",
+                        "on-tertiary-container": "#783901",
+                        "on-secondary-fixed-variant": "#40465a",
+                        "tertiary-fixed-dim": "#ffb787",
+                        "tertiary-container": "#ffa668",
+                        "inverse-surface": "#2d3133",
+                        "primary-fixed": "#68fcbf",
+                        "tertiary": "#904c16",
+                        "on-background": "#191c1e",
+                        "surface-bright": "#f7f9fb",
+                        "outline": "#6c7a71",
+                        "error": "#ba1a1a",
+                        "text-primary": "#0C1324",
+                        "on-tertiary": "#ffffff",
+                        "on-primary-container": "#00563b",
+                        "secondary-container": "#d9dff7",
+                        "text-secondary": "#475569",
+                        "inverse-primary": "#45dfa4",
+                        "surface": "#FFFFFF",
+                        "on-surface": "#191c1e",
+                        "inverse-on-surface": "#eff1f3",
+                        "on-error": "#ffffff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "section-gap": "120px",
+                        "container-max": "1280px",
+                        "margin-x": "24px",
+                        "gutter": "32px",
+                        "unit": "8px",
+                        "card-padding": "40px"
+                    },
+                    "fontFamily": {
+                        "display-hero-mobile": ["Sora"],
+                        "headline-lg": ["Sora"],
+                        "body-lg": ["Inter"],
+                        "button-text": ["Inter"],
+                        "display-hero": ["Sora"],
+                        "label-mono": ["JetBrains Mono"],
+                        "body-md": ["Inter"],
+                        "headline-md": ["Sora"]
+                    },
+                    "fontSize": {
+                        "display-hero-mobile": ["40px", { "lineHeight": "1.2", "letterSpacing": "-0.01em", "fontWeight": "700" }],
+                        "headline-lg": ["48px", { "lineHeight": "1.2", "fontWeight": "600" }],
+                        "body-lg": ["18px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "button-text": ["15px", { "lineHeight": "1.0", "fontWeight": "600" }],
+                        "display-hero": ["72px", { "lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "label-mono": ["12px", { "lineHeight": "1.0", "letterSpacing": "0.05em", "fontWeight": "500" }],
+                        "body-md": ["16px", { "lineHeight": "1.5", "fontWeight": "400" }],
+                        "headline-md": ["32px", { "lineHeight": "1.3", "fontWeight": "600" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body { background-color: #FFFFFF; color: #0C1324; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+    </style>
+</head>
+<body class="font-body-md text-text-primary antialiased bg-surface min-h-screen flex flex-col md:flex-row">
+<!-- SideNavBar (Desktop) -->
+
+<!-- Main Content Area -->
+<main class="flex-1 flex flex-col min-h-screen relative overflow-y-auto"><nav class="relative z-10 w-full px-6 py-4 flex items-center justify-between bg-surface border-b border-border-base">
+<div class="flex items-center gap-3">
+<div class="bg-primary p-2 rounded-lg">
+<span class="material-symbols-outlined text-white">grass</span>
+</div>
+<div>
+<h1 class="text-xl font-bold text-primary tracking-tight leading-none">KrishiNetra</h1>
+<p class="text-[10px] text-text-secondary font-semibold tracking-widest mt-1">ISRO • GIS</p>
+</div>
+</div>
+<div class="hidden md:flex items-center gap-6 bg-surface-container-low rounded-full px-4 py-1.5 border border-border-base">
+<a class="text-text-secondary hover:text-primary text-sm font-medium px-4" href="#">Home</a>
+<a class="text-text-secondary hover:text-primary text-sm font-medium px-4" href="#">GIS Map</a>
+<a class="bg-primary text-white px-4 py-1.5 rounded-full text-sm font-medium" href="#">Marketplace</a>
+</div>
+<div class="flex items-center gap-4">
+<div class="hidden lg:flex bg-surface-container-low rounded-full border border-border-base divide-x divide-border-base">
+<a class="px-4 py-2 text-xs font-semibold text-text-secondary hover:text-primary flex items-center gap-2" href="#"><span class="material-symbols-outlined text-sm">person</span> FARMER</a>
+<a class="px-4 py-2 text-xs font-semibold text-text-secondary hover:text-primary flex items-center gap-2" href="#"><span class="material-symbols-outlined text-sm">badge</span> OFFICER</a>
+<a class="px-4 py-2 text-xs font-semibold text-text-secondary hover:text-primary flex items-center gap-2" href="#"><span class="material-symbols-outlined text-sm">admin_panel_settings</span> ADMINISTRATOR</a>
+</div>
+<div class="flex items-center gap-2 bg-surface-container-low rounded-full px-3 py-1.5 border border-border-base">
+<span class="material-symbols-outlined text-sm text-text-secondary">translate</span>
+<span class="text-xs font-semibold text-text-primary">EN</span>
+<span class="text-border-base">·</span>
+<span class="text-xs font-semibold text-text-secondary">हि</span>
+</div>
+</div>
+</nav>
+<!-- TopNavBar (Mobile mainly, but visible for structure) -->
+
+<div class="p-margin-x md:p-gutter max-w-container-max mx-auto w-full flex-1 pb-24 md:pb-gutter">
+<!-- Page Header -->
+<div class="mb-8 flex flex-col md:flex-row md:items-end justify-between gap-4">
+<div>
+<h2 class="font-headline-lg text-headline-lg-mobile md:text-headline-lg text-text-primary mb-2">Marketplace</h2>
+<p class="font-body-lg text-body-lg text-text-secondary">Sell smarter. Buy better.</p>
+</div>
+<div class="flex gap-2 p-1 bg-surface-container-low rounded-lg border border-border-base w-fit">
+<button class="px-6 py-2 rounded-md bg-primary-container text-on-primary-container font-button-text text-button-text shadow-sm transition-all">Sell Crops</button>
+<button class="px-6 py-2 rounded-md text-text-secondary hover:text-text-primary font-button-text text-button-text transition-all">Buy Farm Inputs</button>
+</div>
+</div>
+<!-- Market Snapshot Row -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+<!-- Card 1: Wheat -->
+<div class="bg-surface-container-low border border-border-base rounded-[24px] p-6 hover:shadow-sm transition-shadow">
+<div class="flex justify-between items-start mb-4">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
+<span class="material-symbols-outlined text-primary">grass</span>
+</div>
+<span class="font-body-lg text-body-lg font-semibold text-text-primary">Wheat</span>
+</div>
+<span class="font-label-mono text-label-mono bg-[#E0F2FE] text-[#0369A1] px-2 py-1 rounded-full">High Demand</span>
+</div>
+<div class="flex items-end gap-3">
+<span class="font-headline-md text-headline-md text-text-primary">₹2,580</span>
+<span class="font-body-md text-body-md text-text-secondary pb-1">/ Qtl</span>
+</div>
+<div class="mt-2 flex items-center gap-1 text-[#16A34A] font-button-text text-button-text">
+<span class="material-symbols-outlined text-[16px]">trending_up</span>
+<span class="">+2.4%</span>
+<span class="text-text-secondary font-body-md text-sm ml-1 font-normal">vs last week</span>
+</div>
+</div>
+<!-- Card 2: Rice -->
+<div class="bg-surface-container-low border border-border-base rounded-[24px] p-6 hover:shadow-sm transition-shadow">
+<div class="flex justify-between items-start mb-4">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
+<span class="material-symbols-outlined text-primary">eco</span>
+</div>
+<span class="font-body-lg text-body-lg font-semibold text-text-primary">Rice (Paddy)</span>
+</div>
+<span class="font-label-mono text-label-mono bg-surface-container-high text-text-secondary px-2 py-1 rounded-full">Stable</span>
+</div>
+<div class="flex items-end gap-3">
+<span class="font-headline-md text-headline-md text-text-primary">₹3,100</span>
+<span class="font-body-md text-body-md text-text-secondary pb-1">/ Qtl</span>
+</div>
+<div class="mt-2 flex items-center gap-1 text-text-secondary font-button-text text-button-text">
+<span class="material-symbols-outlined text-[16px]">trending_flat</span>
+<span class="">0.0%</span>
+<span class="text-text-secondary font-body-md text-sm ml-1 font-normal">vs last week</span>
+</div>
+</div>
+<!-- Card 3: Onion -->
+<div class="bg-surface-container-low border border-border-base rounded-[24px] p-6 hover:shadow-sm transition-shadow">
+<div class="flex justify-between items-start mb-4">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-[#FEE2E2] flex items-center justify-center">
+<span class="material-symbols-outlined text-[#DC2626]">agriculture</span>
+</div>
+<span class="font-body-lg text-body-lg font-semibold text-text-primary">Onion</span>
+</div>
+<span class="font-label-mono text-label-mono bg-[#FEF3C7] text-[#D97706] px-2 py-1 rounded-full">Volatile</span>
+</div>
+<div class="flex items-end gap-3">
+<span class="font-headline-md text-headline-md text-text-primary">₹1,850</span>
+<span class="font-body-md text-body-md text-text-secondary pb-1">/ Qtl</span>
+</div>
+<div class="mt-2 flex items-center gap-1 text-[#DC2626] font-button-text text-button-text">
+<span class="material-symbols-outlined text-[16px]">trending_down</span>
+<span class="">-5.1%</span>
+<span class="text-text-secondary font-body-md text-sm ml-1 font-normal">vs last week</span>
+</div>
+</div>
+</div>
+<!-- Main Split Content -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+<!-- Left/Main Column: Market Intelligence -->
+<div class="lg:col-span-2 space-y-6">
+<div class="bg-surface-container-low border border-border-base rounded-[24px] overflow-hidden">
+<div class="p-6 border-b border-border-base bg-surface">
+<div class="flex justify-between items-center">
+<h3 class="font-body-lg text-body-lg font-semibold text-text-primary">Market Intelligence: Wheat (Lok-1)</h3>
+<button class="text-primary hover:text-primary-container font-button-text text-button-text flex items-center gap-1">
+                                    View Full Report <span class="material-symbols-outlined text-sm">arrow_forward</span>
+</button>
+</div>
+</div>
+<div class="p-6 grid grid-cols-1 md:grid-cols-2 gap-8">
+<div class="space-y-6">
+<div>
+<p class="font-label-mono text-label-mono text-text-secondary uppercase mb-1">Mandi Average</p>
+<p class="font-headline-md text-headline-md text-text-primary">₹2,580</p>
+</div>
+<div>
+<p class="font-label-mono text-label-mono text-text-secondary uppercase mb-1">KrishiNetra Reference Range</p>
+<div class="flex items-center gap-2">
+<p class="font-headline-md text-headline-md text-primary">₹2,580 <span class="text-text-secondary text-xl font-normal">-</span> ₹2,720</p>
+</div>
+<p class="font-body-md text-sm text-text-secondary mt-2">Based on satellite moisture index and local yield predictions.</p>
+</div>
+<button class="w-full py-3 bg-primary text-on-primary font-button-text text-button-text rounded-xl hover:bg-primary-container hover:text-on-primary-container transition-colors shadow-sm">
+                                    List Crop for Sale
+                                </button>
+</div>
+<div class="h-48 md:h-full bg-surface border border-border-base rounded-xl relative overflow-hidden flex items-center justify-center">
+<!-- Placeholder for a chart -->
+<div class="absolute inset-0 bg-gradient-to-tr from-surface-container-low to-surface opacity-50"></div>
+<span class="material-symbols-outlined text-border-base text-[64px] absolute">show_chart</span>
+<p class="relative z-10 font-body-md text-text-secondary bg-surface/80 px-4 py-2 rounded-lg backdrop-blur-sm border border-border-base">Price Trend Chart (Placeholder)</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Right Column: Nearby Mandis -->
+<div class="lg:col-span-1 space-y-6">
+<div class="bg-surface-container-low border border-border-base rounded-[24px] p-6">
+<h3 class="font-body-lg text-body-lg font-semibold text-text-primary mb-4 flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">location_on</span> Nearby Mandis
+                        </h3>
+<p class="font-body-md text-sm text-text-secondary mb-4">Current modal prices for Wheat (Lok-1)</p>
+<div class="space-y-4">
+<!-- Mandi Item -->
+<div class="flex justify-between items-center p-3 bg-surface rounded-xl border border-border-base">
+<div>
+<p class="font-button-text text-button-text text-text-primary">Indore</p>
+<p class="font-body-md text-sm text-text-secondary">45 km away</p>
+</div>
+<div class="text-right">
+<p class="font-button-text text-button-text text-text-primary">₹2,610</p>
+<p class="font-label-mono text-[10px] text-[#16A34A]">+1.2%</p>
+</div>
+</div>
+<!-- Mandi Item -->
+<div class="flex justify-between items-center p-3 bg-surface rounded-xl border border-border-base border-l-4 border-l-primary shadow-sm">
+<div>
+<p class="font-button-text text-button-text text-text-primary">Ujjain</p>
+<p class="font-body-md text-sm text-text-secondary">62 km away</p>
+</div>
+<div class="text-right">
+<p class="font-button-text text-button-text text-text-primary">₹2,650</p>
+<p class="font-label-mono text-[10px] text-text-secondary">Best Price</p>
+</div>
+</div>
+<!-- Mandi Item -->
+<div class="flex justify-between items-center p-3 bg-surface rounded-xl border border-border-base">
+<div>
+<p class="font-button-text text-button-text text-text-primary">Dewas</p>
+<p class="font-body-md text-sm text-text-secondary">38 km away</p>
+</div>
+<div class="text-right">
+<p class="font-button-text text-button-text text-text-primary">₹2,550</p>
+<p class="font-label-mono text-[10px] text-[#DC2626]">-0.5%</p>
+</div>
+</div>
+<!-- Mandi Item -->
+<div class="flex justify-between items-center p-3 bg-surface rounded-xl border border-border-base">
+<div>
+<p class="font-button-text text-button-text text-text-primary">Sehore</p>
+<p class="font-body-md text-sm text-text-secondary">85 km away</p>
+</div>
+<div class="text-right">
+<p class="font-button-text text-button-text text-text-primary">₹2,580</p>
+<p class="font-label-mono text-[10px] text-text-secondary">Stable</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+
+
+</body></html>

@@ -1,3 +1,4 @@
+# Python
 __pycache__/
 *.pyc
 *.pyo
@@ -9,10 +10,14 @@ venv/
 ENV/
 env/
 
-# Data and Models output if large/temporary
-/data/
+# Large Raw / Generated Data (preserve gitkeeps)
+/data/PASTIS-R_PixelSet/
+/data/raw/*
+!/data/raw/.gitkeep
+/data/generated/*
+!/data/generated/.gitkeep
 
-# Environment files
+# Environment variables & secrets
 .env
 .env.local
 .env.*.local
@@ -30,4 +35,4 @@ frontend/build/
 .vercel/
 
 # Jupyter
-.ipynb_checkpoints/
+.ipynb_checkpoints/

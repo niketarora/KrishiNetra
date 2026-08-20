@@ -1,14 +1,14 @@
 import React, { useState } from "react";
-import Navbar from "./components/Navbar";
+import Navbar from "./components/layout/Navbar";
+import LeafLoader from "./components/layout/LeafLoader";
 import Home from "./components/Home";
-import GisMap from "./components/GisMap";
-import FarmerDashboard from "./components/FarmerDashboard";
-import OfficerDashboard from "./components/OfficerDashboard";
-import AdminDashboard from "./components/AdminDashboard";
-import LeafLoader from "./components/LeafLoader";
-import VoiceAssistantModal from "./components/VoiceAssistantModal";
-import VoiceTriggerButton from "./components/VoiceTriggerButton";
-import Marketplace from "./components/Marketplace";
+import GisMap from "./components/gis/GisMap";
+import FarmerDashboard from "./components/dashboards/FarmerDashboard";
+import OfficerDashboard from "./components/dashboards/OfficerDashboard";
+import AdminDashboard from "./components/dashboards/AdminDashboard";
+import VoiceAssistantModal from "./components/voice/VoiceAssistantModal";
+import VoiceTriggerButton from "./components/voice/VoiceTriggerButton";
+import Marketplace from "./components/marketplace/Marketplace";
 
 const LOADER_LABELS = {
   home: "Loading…",
@@ -76,4 +76,3 @@ export default function App() {
     </div>
   );
 }
-
