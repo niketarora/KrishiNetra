@@ -1,51 +1,104 @@
-# KrishiNetra · ISRO Smart Farming
+# KrishiNetra · ISRO Smart Farming Platform
 
-KrishiNetra — AI-powered smart farming platform using satellite data, machine learning, weather intelligence, and multilingual voice assistance to provide field-level crop insights, soil moisture estimation, irrigation advisory, and real-time agricultural recommendations.
+**KrishiNetra** is an AI-powered smart farming platform leveraging Sentinel-1 SAR and Sentinel-2 optical Earth observation satellite data, weather intelligence, machine learning, and multilingual Voice AI assistance. It provides field-level crop classification, soil moisture estimation, irrigation scheduling, agricultural advisory, and trade marketplace tools for Indian farmers and agriculture officials.
 
-Uses the **PASTIS-R** dataset (Sentinel-1 SAR + Sentinel-2 optical) to identify crops on agricultural parcels and recommend irrigation in English and Hindi.
+---
 
-## Project Structure
+## 🏗️ Architecture & Directory Structure
 
 ```
-ISRO-Smart-Farming/
-├── api/            Vercel Serverless Function entrypoint (index.py)
-├── backend/        FastAPI REST & Voice AI Service
-│   ├── app.py          App + CORS + Static mounts
-│   ├── routes.py       POST /predict & Voice AI endpoints
-│   ├── voice_orchestrator.py  Voice AI agent tool router
-│   └── sarvam.py       Sarvam AI Saaras STT & Bulbul TTS client
-├── models/         ML & Analytics core
-│   ├── loader.py           Load Sentinel .npy + metadata
-│   ├── feature_extractor.py  Band statistics
-│   ├── train.py            Train Random Forest
-│   ├── predict.py          Crop prediction engine
-│   ├── moisture.py         NDVI + SAR soil moisture
-│   ├── weather.py          Open-Meteo live weather
-│   └── advisor.py          Bilingual irrigation advisory engine
-├── scripts/        Dev/build scripts & dataset builders
-├── utils/          Geospatial coordinate converter
-└── frontend/       React (CRA + Tailwind CSS) Dashboard
+KrishiNetra/
+├── agriculture/             # Domain-specific agriculture logic & ML inference
+│   ├── prediction/          # Multi-spectral crop classification engine
+│   │   ├── labels.py        # 19 PASTIS-R crop class definitions
+│   │   ├── loader.py        # Sentinel-1/2 time series pixel loader
+│   │   ├── feature_extractor.py # Statistical band & index extractor
+│   │   └── predict.py       # Inference pipeline & confidence scoring
+│   ├── advisory/            # Agricultural advisory subsystem
+│   │   ├── moisture.py      # SAR + NDVI soil moisture estimation
+│   │   ├── irrigation.py    # Crop water requirement & scheduling
+│   │   └── advisor.py       # Bilingual (Hindi/English) advisory report generator
+│   ├── weather.py           # Open-Meteo weather API client with 5-min caching
+│   └── coordinate_converter.py # Geospatial coordinate transformations (WGS84 <-> UTM)
+├── backend/                 # FastAPI REST API & Voice AI pipeline
+│   ├── routes/              # Modular route handlers
+│   │   ├── agriculture.py   # Crop prediction & field advisory endpoints
+│   │   ├── voice.py         # Voice query (audio & text) endpoints
+│   │   └── avatar.py        # Live Avatar session endpoints
+│   ├── schemas/             # Pydantic request/response validation schemas
+│   ├── services/            # External AI client integrations (Sarvam AI STT/TTS)
+│   ├── voice/               # Voice AI agent orchestration & tool engine
+│   └── app.py               # FastAPI application entry point
+├── frontend/                # React 18 frontend with Tailwind CSS & Leaflet
+│   ├── src/
+│   │   ├── components/
+│   │   │   ├── dashboards/  # Farmer, Officer, and Admin dashboards
+│   │   │   ├── gis/         # GIS interactive map & multi-layer satellite viewer
+│   │   │   ├── marketplace/ # Crop trading & farm inputs marketplace
+│   │   │   ├── voice/       # Voice assistant modal & Live Avatar integration
+│   │   │   ├── layout/      # Navbar, loaders, and global layout wrappers
+│   │   │   └── shared/      # Reusable UI primitives and vector icons
+│   │   ├── data/            # Demo datasets (mock parcels, districts, users)
+│   │   ├── lib/             # Modular API clients (agriculture, voice, avatar)
+│   │   └── App.js           # Root application component
+│   └── public/
+│       └── assets/          # Static images and video assets
+├── data/                    # Data storage (gitignored raw / generated files)
+│   ├── raw/                 # Raw GeoJSON & Sentinel pixel data
+│   └── generated/           # Extracted feature CSVs
+├── models/                  # Serialized ML models (crop_classifier.pkl)
+├── scripts/                 # Utilities, training, and test suite
+│   ├── training/            # Dataset builders, feature verification & training
+│   ├── tests/               # Comprehensive regression & unit test suite
+│   └── utilities/           # Avatar processing and helper utilities
+├── docs/                    # Architecture, API contracts, and design docs
+│   ├── architecture/        # API contracts & pipeline specifications
+│   ├── ui-designs/          # UI wireframes, screens, and design notes
+│   └── plans/               # Historical implementation plans
+└── api/                     # Vercel serverless deployment entrypoint
 ```
 
-## Setup & Running Locally
+---
 
-### 1. Data & Training (Optional for real dataset)
+## 🚀 Getting Started Locally
+
+### 1. Prerequisites
+- Python 3.10+
+- Node.js 18+ and npm
+
+### 2. Backend Setup
 ```bash
-python scripts/dataset_builder.py   # -> outputs/features.csv
-python scripts/train_model.py       # -> outputs/crop_classifier.pkl
-```
+# Install Python dependencies
+pip install -r requirements.txt
 
-### 2. Backend Service
-```bash
+# Start FastAPI backend
 python -m uvicorn backend.app:app --reload --port 8000
 ```
-Runs at `http://localhost:8000`.
+Backend API will be available at `http://localhost:8000` (Swagger docs at `http://localhost:8000/docs`).
 
-### 3. Frontend Dashboard
+### 3. Frontend Setup
 ```bash
 cd frontend
 npm install
 npm start
 ```
-Runs at `http://localhost:3000`.
+Frontend will be available at `http://localhost:3000`.
 
+### 4. Running Tests
+Run the test suite across all subsystems:
+```powershell
+python scripts/tests/test_predict.py
+python scripts/tests/test_advisor.py
+python scripts/tests/test_weather.py
+python scripts/tests/test_moisture.py
+python scripts/tests/test_voice_agent.py
+python scripts/tests/test_voice_pipeline.py
+```
+
+---
+
+## 🛰️ Earth Observation & AI Stack
+- **Sentinel-2 (Optical):** 10 bands (B2–B12) providing NDVI, NDRE, NDWI, EVI, and SAVI vegetation health indices.
+- **Sentinel-1 (SAR Radar):** Dual-polarization (VV/VH) microwave radar for cloud-penetrating soil moisture dynamics.
+- **Machine Learning:** Multi-temporal Random Forest Classifier trained on the PASTIS-R benchmark dataset across 19 crop classes.
+- **Voice AI:** Multilingual Voice Agent powered by Sarvam AI (Saaras STT and Bulbul TTS) supporting Hindi and English with live lip-synced avatar presentation.

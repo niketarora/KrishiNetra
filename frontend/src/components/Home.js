@@ -1,9 +1,9 @@
 import React, { useState } from "react";
-import { Satellite, Search, Arrow, Sprout, BarChart, Shield, Activity } from "./icons";
-import { STATS, LANGUAGES } from "../data/mock";
+import { Satellite, Search, Arrow, Sprout, BarChart, Shield, Activity } from "./shared/icons";
+import { STATS, LANGUAGES } from "../data/demoData";
 
-// Farmer ploughing photo at frontend/public/hero.jpeg
-const HERO_IMG = process.env.PUBLIC_URL + "/hero.jpeg";
+// Farmer ploughing photo at frontend/public/assets/images/hero.jpeg or frontend/public/hero.jpeg
+const HERO_IMG = process.env.PUBLIC_URL + "/assets/images/hero.jpeg";
 
 const QUICK = ["P0001", "P0005", "P0010", "P0014"];
 
@@ -57,7 +57,7 @@ export default function Home({ setView, onSearch }) {
       <section className="relative overflow-hidden">
         <div
           className="absolute inset-0 bg-cover bg-center"
-          style={{ backgroundImage: `url(${HERO_IMG})` }}
+          style={{ backgroundImage: `url(${HERO_IMG}), url(${process.env.PUBLIC_URL}/hero.jpeg)` }}
         />
         <div className="absolute inset-0 bg-gradient-to-r from-ink/95 via-ink/80 to-ink/30" />
 

@@ -1,0 +1,3 @@
+"""
+KrishiNetra Agriculture Prediction Subpackage.
+"""

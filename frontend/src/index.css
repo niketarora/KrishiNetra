@@ -96,3 +96,27 @@ h1, h2, h3, .font-display {
   animation: avatarGlow 2s infinite ease-in-out;
 }
 
+/* Sound waveform equalizer animations */
+@keyframes waveBar1 {
+  0%, 100% { height: 6px; }
+  50% { height: 16px; }
+}
+@keyframes waveBar2 {
+  0%, 100% { height: 16px; }
+  50% { height: 8px; }
+}
+@keyframes waveBar3 {
+  0%, 100% { height: 10px; }
+  50% { height: 18px; }
+}
+
+.animate-wave-1 {
+  animation: waveBar1 0.8s ease-in-out infinite;
+}
+.animate-wave-2 {
+  animation: waveBar2 0.7s ease-in-out infinite 0.15s;
+}
+.animate-wave-3 {
+  animation: waveBar3 0.9s ease-in-out infinite 0.3s;
+}
+

@@ -1,0 +1,22 @@
+LABEL_NAMES = {
+    0: "Background",
+    1: "Meadow",
+    2: "Soft Winter Wheat",
+    3: "Corn",
+    4: "Winter Barley",
+    5: "Winter Rapeseed",
+    6: "Spring Barley",
+    7: "Sunflower",
+    8: "Grapevine",
+    9: "Beet",
+    10: "Winter Triticale",
+    11: "Winter Durum Wheat",
+    12: "Fruits / Vegetables / Flowers",
+    13: "Potatoes",
+    14: "Leguminous Fodder",
+    15: "Soybeans",
+    16: "Orchard",
+    17: "Mixed Cereal",
+    18: "Sorghum",
+    19: "Void Label"
+}
