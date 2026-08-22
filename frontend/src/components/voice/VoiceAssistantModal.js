@@ -449,14 +449,14 @@ export default function VoiceAssistantModal({ isOpen, onClose, fieldId = "P0001"
               ))}
             </div>
 
-            {/* Compact Conversation Cards Section (No Scroll Overflow) */}
-            <div className="px-4 mt-1.5 space-y-1.5 overflow-hidden">
+            {/* Conversation Cards Section with Smooth Scroll for Elaborated Knowledge */}
+            <div className="px-4 mt-1.5 space-y-2 max-h-[220px] overflow-y-auto pr-1">
               {messages.slice(-2).map((msg) => {
                 if (msg.type === "user") {
                   return (
                     <div
                       key={msg.id}
-                      className="bg-[#0c1520]/90 border border-white/[0.08] rounded-xl p-2 px-3 flex items-start gap-2 backdrop-blur-md shadow-md"
+                      className="bg-[#0c1520]/90 border border-white/[0.08] rounded-xl p-2.5 px-3 flex items-start gap-2 backdrop-blur-md shadow-md"
                     >
                       <div className="w-5 h-5 rounded-lg bg-teal-950/60 border border-teal-400/25 flex items-center justify-center text-teal-400 shrink-0 mt-0.5">
                         <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
@@ -470,7 +470,7 @@ export default function VoiceAssistantModal({ isOpen, onClose, fieldId = "P0001"
                           </span>
                           <span className="text-[9px] text-slate-400">{msg.time}</span>
                         </div>
-                        <p className="text-[11.5px] text-white font-normal leading-tight mt-0.5">
+                        <p className="text-[11.5px] text-white font-normal leading-relaxed mt-0.5 whitespace-pre-line">
                           {msg.text}
                         </p>
                       </div>
@@ -481,7 +481,7 @@ export default function VoiceAssistantModal({ isOpen, onClose, fieldId = "P0001"
                 return (
                   <div
                     key={msg.id}
-                    className="bg-[#0c1520]/90 border border-white/[0.08] rounded-xl p-2 px-3 flex items-start gap-2 backdrop-blur-md shadow-md"
+                    className="bg-[#0c1520]/95 border border-white/[0.08] rounded-xl p-2.5 px-3 flex items-start gap-2 backdrop-blur-md shadow-md"
                   >
                     <div className="w-5 h-5 rounded-lg bg-emerald-950/60 border border-emerald-400/25 flex items-center justify-center text-emerald-400 shrink-0 mt-0.5">
                       <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
@@ -511,9 +511,9 @@ export default function VoiceAssistantModal({ isOpen, onClose, fieldId = "P0001"
                           <span className="text-[9px] text-slate-400">{msg.time}</span>
                         </div>
                       </div>
-                      <p className="text-[11.5px] text-slate-200 font-normal leading-tight mt-0.5">
+                      <div className="text-[11.5px] text-slate-200 font-normal leading-relaxed mt-1 max-h-40 overflow-y-auto pr-1 whitespace-pre-line select-text">
                         {msg.text}
-                      </p>
+                      </div>
                     </div>
                   </div>
                 );

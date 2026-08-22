@@ -56,7 +56,7 @@ X_train, X_test, y_train, y_test = train_test_split(
 model = RandomForestClassifier(
     n_estimators=100,
     random_state=42,
-    n_jobs=-1
+    n_jobs=1
 )
 
 print("\nTraining Model...\n")

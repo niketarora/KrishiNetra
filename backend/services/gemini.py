@@ -39,21 +39,26 @@ def _load_env_file():
 
 _load_env_file()
 
-SYSTEM_INSTRUCTION = """You are KrishiNetra (कृषिनेत्र), an intelligent and authoritative AI Agricultural & Voice Assistant for Indian farmers.
+SYSTEM_INSTRUCTION = """You are KrishiNetra (कृषिनेत्र), an authoritative, empathetic, and highly knowledgeable AI Agricultural & Agronomy Advisor for Indian farmers, agronomists, and agricultural extension officers.
 
 Operational Guidelines:
 1. LIVE FARM FIELD & SENSOR QUERIES:
-   - When the user asks specifically about their field parcel (e.g. soil moisture, current field weather, rain forecast for the parcel, NDVI crop health/vigor, crop identification on their field, or irrigation schedule for parcel P0001), you MUST invoke the appropriate registered tool (get_current_weather, get_moisture_status, get_crop_prediction, get_irrigation_advisory, get_crop_health, get_field_details, get_weather_forecast).
+   - When the user asks specifically about their field parcel sensor data (e.g. soil moisture, current field weather, rain forecast for the parcel, NDVI crop health/vigor, crop identification on their field, or irrigation schedule for parcel P0001), you MUST invoke the appropriate registered tool (get_current_weather, get_moisture_status, get_crop_prediction, get_irrigation_advisory, get_crop_health, get_field_details, get_weather_forecast).
    - Use the selected field_id (e.g., P0001) provided in context.
 
-2. GENERAL AGRICULTURE, PEST CONTROL, CROPS & CONVERSATIONAL QUERIES:
-   - If the user asks general agricultural questions (e.g., how to protect crops from pests/aphids, best fertilizers for wheat/mustard/rice, organic farming tips, sowing methods, crop diseases, government schemes, farming practices), or conversational queries (greetings, who are you, general help):
-   - Do NOT invoke any field sensor tool.
-   - Answer directly, clearly, and authoritatively from your own vast agricultural expertise.
+2. DIRECT AGRICULTURAL KNOWLEDGE & EXPERT ADVISORY:
+   - When the user asks general agricultural questions (e.g., pest & insect control, crop disease management, fertilizer dosages/NPK schedules, organic farming/vermicompost, seed treatment, weed management, crop cultivation practices, government schemes, soil health improvement):
+   - Do NOT invoke field sensor tools.
+   - Provide an ELABORATED, COMPREHENSIVE, and PRACTICAL explanation. Do not give a brief 1-line or superficial answer.
+   - Structure your elaborated response clearly:
+     * Cause / Identification: Clearly explain the core issue, disease symptoms, or agricultural principle.
+     * Step-by-Step Action Plan: Provide practical, actionable solutions with specific recommended dosages (both organic/biological methods and chemical remedies where applicable).
+     * Application Timing & Precautions: Specify exact spray timings (e.g., early morning/evening), safety precautions, and soil/weather considerations.
+   - For general conversational queries (greetings, identity, general help), provide a warm, respectful, and comprehensive overview of how KrishiNetra assists farmers.
 
 3. RESPONSE STYLE & LANGUAGE:
-   - Provide answers in concise, empathetic spoken style (2-3 short sentences max) suitable for voice audio.
-   - Strict language adherence: Natural conversational Hindi in Devanagari script when language is 'hi', or clear English when language is 'en'.
+   - Provide rich, structured, and informative responses formatted with clean paragraphs or bullet points where appropriate.
+   - Strict language adherence: Natural, fluent conversational Hindi in Devanagari script when language is 'hi', or professional, clear English when language is 'en'.
 """
 
 GEMINI_TOOL_DEFINITIONS = [
@@ -265,13 +270,14 @@ class GeminiService:
             }
 
         url = f"{self.base_url}/{self.model}:generateContent?key={self.api_key}"
-        target_lang = "Hindi (Devanagari)" if language == "hi" else "English"
+        target_lang = "Hindi (Devanagari script)" if language == "hi" else "English"
         prompt = (
             f"User Query: \"{text}\"\n"
             f"Selected Field ID: \"{field_id}\"\n"
             f"Response Language: \"{target_lang}\"\n"
-            f"Instructions: If the user is asking for specific live field data (weather, moisture, crop prediction, irrigation, NDVI) for field {field_id}, call the appropriate tool. "
-            f"If the user is asking general farming advice, pest control, crop management, general weather info, or conversation, respond directly in 2-3 short, clear sentences in {target_lang}."
+            f"Instructions:\n"
+            f"1. If the user is specifically requesting live field parcel sensor data (current weather, soil moisture %, crop prediction/detection, irrigation schedule, NDVI crop health) for field {field_id}, invoke the corresponding registered tool.\n"
+            f"2. If the user is asking direct agricultural knowledge, pest/insect/disease management, fertilizer NPK dosage, organic farming, seed treatment, cultivation techniques, government schemes, or general farming guidance, respond directly with a thoroughly ELABORATED, in-depth, practical, and step-by-step response in {target_lang}. Do not give a brief one-line answer; provide clear actionable steps, dosages, timings, and best practices."
         )
 
         if context and context.get("history"):
@@ -285,8 +291,8 @@ class GeminiService:
             "tools": [{"function_declarations": GEMINI_TOOL_DEFINITIONS}],
             "tool_config": {"function_calling_config": {"mode": "AUTO"}},
             "generationConfig": {
-                "temperature": 0.2,
-                "maxOutputTokens": 200
+                "temperature": 0.25,
+                "maxOutputTokens": 1200
             }
         }
 
@@ -353,23 +359,35 @@ class GeminiService:
         context: Optional[Dict[str, Any]] = None
     ) -> str:
         """
-        Directly answers general agricultural, agronomy, or conversational questions.
+        Directly answers general agricultural, agronomy, or conversational questions
+        with comprehensive, elaborated, and actionable expert guidance.
         """
         if self.is_available() and question:
             url = f"{self.base_url}/{self.model}:generateContent?key={self.api_key}"
             target_lang_str = "Hindi (Devanagari script)" if language == "hi" else "English"
 
             prompt = (
-                f"You are KrishiNetra, a helpful Indian agricultural AI assistant.\n"
-                f"Question: \"{question}\"\n\n"
-                f"Respond directly and clearly in 1 to 2 short conversational sentences in {target_lang_str}. Do not echo instructions."
+                f"You are KrishiNetra, an expert AI agricultural advisor and senior agronomist.\n"
+                f"Farmer / User Question: \"{question}\"\n\n"
+                f"Provide a comprehensive, ELABORATED, and well-structured answer in {target_lang_str}. Do not give a short 1-line or superficial answer.\n"
+                f"Structure your response with:\n"
+                f"1. Core explanation / diagnosis of the issue or concept.\n"
+                f"2. Step-by-step actionable recommendations, including specific organic methods and chemical solutions with exact dosages (per liter / per acre).\n"
+                f"3. Optimal timing, precautions, and best agronomic practices.\n"
+                f"Keep the language natural, respectful, and easy for an Indian farmer or agriculture officer to follow. Do not echo system instructions."
             )
 
+            if context and context.get("history"):
+                recent = context["history"][-2:]
+                history_str = "\n".join([f"{m.get('role')}: {m.get('text')}" for m in recent])
+                prompt += f"\n\nRecent Context:\n{history_str}"
+
             payload = {
+                "system_instruction": {"parts": [{"text": SYSTEM_INSTRUCTION}]},
                 "contents": [{"role": "user", "parts": [{"text": prompt}]}],
                 "generationConfig": {
                     "temperature": 0.3,
-                    "maxOutputTokens": 250
+                    "maxOutputTokens": 1500
                 }
             }
 
@@ -444,33 +462,135 @@ class GeminiService:
 
     def _heuristic_direct_response(self, question: str, language: str) -> str:
         """
-        Sensible, helpful offline fallback for general questions (greetings, agronomy, help).
+        Comprehensive, highly elaborated offline fallback for general agricultural questions
+        (pests, diseases, fertilizer management, organic farming, weed control, greetings).
         """
         is_hi = language == "hi"
         q_lower = (question or "").lower()
 
-        # Greetings
-        if any(g in q_lower for g in ["namaste", "hello", "hi", "hey", "नमस्ते", "प्रणाम", "कौन हो", "who are you"]):
+        # 1. Greetings & Introduction
+        if any(g in q_lower for g in ["namaste", "hello", "hi", "hey", "नमस्ते", "प्रणाम", "कौन हो", "who are you", "kya kar sakte"]):
             if is_hi:
-                return "नमस्ते! मैं कृषिनेत्र AI सहायक हूँ। आप मुझसे खेत के मौसम, मिट्टी की नमी, फसल स्वास्थ्य या खेती से जुड़ा कोई भी सवाल पूछ सकते हैं।"
-            return "Hello! I am KrishiNetra AI Assistant. You can ask me about field weather, soil moisture, crop health, or any farming advice."
+                return (
+                    "नमस्ते! मैं कृषिनेत्र AI सहायक हूँ — आपका स्मार्ट कृषि एवं उपग्रह आधारित सलाहकार।\n\n"
+                    "मैं आपके खेत के लिए निम्नलिखित सेवाएं प्रदान करता हूँ:\n"
+                    "• इसरो/सेंटिनेल उपग्रह द्वारा रीयल-टाइम मिट्टी की नमी और फसल स्वास्थ्य (NDVI) विश्लेषण।\n"
+                    "• सटीक मौसम पूर्वानुमान और वैज्ञानिक सिंचाई शेड्यूलिंग।\n"
+                    "• कीट-रोग नियंत्रण, संतुलित उर्वरक प्रबंधन और जैविक खेती पर विस्तृत विशेषज्ञ सलाह।"
+                )
+            return (
+                "Hello! I am KrishiNetra AI Assistant — your intelligent satellite and agronomy advisor.\n\n"
+                "I assist you with:\n"
+                "• Real-time soil moisture and crop vigor (NDVI) analysis using ISRO/Sentinel satellite data.\n"
+                "• Accurate localized weather forecasts and precision irrigation scheduling.\n"
+                "• Comprehensive guidance on pest control, disease treatment, balanced NPK fertilization, and sustainable farming."
+            )
 
-        # Pest / Disease general
-        if any(p in q_lower for p in ["pest", "kida", "keeda", "bimari", "disease", "rog", "कीड़ा", "कीड़े", "कीट", "बीमारी", "रोग", "इल्ली"]):
+        # 2. Pest & Insect Control (कीट, माहू, चेपा, इल्ली, सुंडी, कीड़ा, Pest, Aphid, Borer)
+        if any(p in q_lower for p in ["pest", "kida", "keeda", "kit", "aphid", "chepa", "mahu", "illi", "caterpillar", "borer", "sundi", "कीड़ा", "कीड़े", "कीट", "माहू", "चेपा", "इल्ली", "सुंडी", "दीमक"]):
             if is_hi:
-                return "फसल में कीट नियंत्रण के लिए नीम तेल (Neem Oil) का छिड़काव या कृषि विशेषज्ञ की सलाह अनुसार अनुशंसित कीटनाशक का उचित मात्रा में प्रयोग करें।"
-            return "For pest control, consider spraying neem-based bio-pesticides or consult local agricultural guidelines for recommended treatments."
+                return (
+                    "फसल में कीट नियंत्रण के लिए विस्तृत एवं प्रभावी त्रि-स्तरीय प्रबंधन उपाय:\n\n"
+                    "1. **जैविक एवं यांत्रिक रोकथाम:**\n"
+                    "   - नीम तेल (1500 ppm) को 5 मिली प्रति लीटर पानी में मिलाकर घोल का छिड़काव करें।\n"
+                    "   - खेत में प्रति एकड़ 4-5 पीले चिपचिपे ट्रैप (Yellow Sticky Traps) या फेरोमोन ट्रैप लगाएं।\n\n"
+                    "2. **रासायनिक उपचार (प्रकोप अधिक होने पर):**\n"
+                    "   - रस चूसक कीटों (माहू/चेपा/थ्रिप्स) के लिए: इमिडाक्लोप्रिड 17.8% SL (0.5 मिली प्रति लीटर पानी) का छिड़काव करें।\n"
+                    "   - इल्ली/सैनिक कीट के लिए: क्लोरेंट्रानिलिप्रोल 18.5% SC (0.4 मिली प्रति लीटर पानी) का उपयोग करें।\n\n"
+                    "3. **सावधानी व समय:**\n"
+                    "   - छिड़काव हमेशा सुबह या शाम के शांत मौसम में करें ताकि मधुमक्खियों को नुकसान न हो और दवा का पूरा असर मिले।"
+                )
+            return (
+                "Comprehensive Integrated Pest Management (IPM) guidelines for your crop:\n\n"
+                "1. **Biological & Mechanical Measures:**\n"
+                "   - Spray Neem Oil (1500 ppm) @ 5 ml/litre of water at initial pest emergence.\n"
+                "   - Install 4-5 Yellow Sticky Traps or Pheromone traps per acre for sucking pests.\n\n"
+                "2. **Chemical Control (For Severe Infestations):**\n"
+                "   - Sucking pests (Aphids, Jassids, Thrips): Spray Imidacloprid 17.8% SL @ 0.5 ml/L of water.\n"
+                "   - Caterpillars & Borers: Spray Chlorantraniliprole 18.5% SC @ 0.4 ml/L or Emamectin Benzoate 5% SG @ 0.5 g/L.\n\n"
+                "3. **Application & Safety:**\n"
+                "   - Spray during calm early morning or late evening hours to protect pollinators and ensure maximum absorption."
+            )
 
-        # Fertilizer / Khad general
-        if any(f in q_lower for f in ["fertilizer", "khad", "urea", "dap", "खाद", "यूरिया"]):
+        # 3. Crop Disease & Fungus (रोग, बीमारी, फफूंद, पीला रतुआ, झुलसा, पाउडरी मिल्ड्यू, Rust, Blight, Rot, Mildew)
+        if any(d in q_lower for d in ["bimari", "disease", "rog", "fungus", "faphund", "ratua", "rust", "jhulsa", "blight", "rot", "mildew", "बीमारी", "रोग", "फफूंद", "रतुआ", "झुलसा", "धब्बा", "उकठा"]):
             if is_hi:
-                return "फसल के लिए संतुलित मात्रा में नाइट्रोजन, फास्फोरस और पोटाश (NPK) का उपयोग करें और जैविक कम्पोस्ट खाद को प्राथमिकता दें।"
-            return "Use a balanced NPK fertilizer ratio suited to your crop stage, and prioritize organic compost for soil health."
+                return (
+                    "फसल में फफूंदजनित व जीवाणु रोगों के संपूर्ण उपचार की सिफारिश:\n\n"
+                    "1. **रोग की रोकथाम व बीजोपचार:**\n"
+                    "   - खेत में जलभराव न होने दें और संक्रमित पत्तियों को हटाकर नष्ट करें।\n"
+                    "   - बुवाई से पहले बीजोपचार ट्राइकोडर्मा विरिडी (5 ग्राम/किग्रा बीज) अथवा कार्बेन्डाजिम (2 ग्राम/किग्रा बीज) से करें।\n\n"
+                    "2. **कवकनाशी (Fungicide) छिड़काव:**\n"
+                    "   - पीला रतुआ / पत्ती झुलसा: प्रोपिकोनाजोल 25% EC (1 मिली प्रति लीटर) या अजोक्सीस्ट्रोबिन + डाइफेनोकोनाजोल (1 मिली प्रति लीटर) का छिड़काव करें।\n"
+                    "   - तना गलन / डाउनी मिल्ड्यू: मैन्कोजेब 75% WP (2.5 ग्राम प्रति लीटर) या कॉपर ऑक्सीक्लोराइड 50% WP (2.5 ग्राम प्रति लीटर) का 12-15 दिन के अंतराल पर 2 बार छिड़काव करें।\n\n"
+                    "3. **पोषक संतुलन:** पोटाश और जिंक का संतुलित प्रयोग करें जिससे पौधों की प्राकृतिक रोग प्रतिरोधक क्षमता बढ़ सके।"
+                )
+            return (
+                "Comprehensive Crop Disease Management & Fungicidal Treatment:\n\n"
+                "1. **Preventive Sanitation & Seed Treatment:**\n"
+                "   - Ensure proper field drainage and destroy infected plant debris.\n"
+                "   - Treat seeds with Trichoderma viride @ 5g/kg seed or Carbendazim 50% WP @ 2g/kg seed before sowing.\n\n"
+                "2. **Foliar Fungicide Application:**\n"
+                "   - Rusts & Leaf Blights: Spray Propiconazole 25% EC @ 1 ml/L or Azoxystrobin + Difenoconazole @ 1 ml/L.\n"
+                "   - Downy Mildew / Stem Rot: Spray Mancozeb 75% WP @ 2.5 g/L or Copper Oxychloride 50% WP @ 2.5 g/L.\n\n"
+                "3. **Nutritional Resilience:** Apply balanced Potassium and Zinc to bolster the crop's innate disease resistance."
+            )
 
-        # General help
+        # 4. Fertilizers & NPK Nutrition (खाद, यूरिया, डीएपी, NPK, पोषण, उर्वरक, Fertilizer, Urea, DAP, Zinc, Potash)
+        if any(f in q_lower for f in ["fertilizer", "khad", "urea", "dap", "npk", "zinc", "potash", "poshan", "खाद", "यूरिया", "डीएपी", "उर्वरक", "पोषक", "जिंक", "पोटाश"]):
+            if is_hi:
+                return (
+                    "फसल के लिए वैज्ञानिक एवं संतुलित पोषक तत्व प्रबंधन (NPK) की अनुशंसा:\n\n"
+                    "1. **बुवाई के समय (बेसल डोज):**\n"
+                    "   - प्रति एकड़ 50 किग्रा DAP + 25 किग्रा म्यूरेट ऑफ पोटाश (MOP) और 5 किग्रा जिंक सल्फेट 33% मिट्टी में मिलाएं।\n\n"
+                    "2. **टॉप ड्रेसिंग (यूरिया विभाजन):**\n"
+                    "   - यूरिया को एक साथ न डालें। पहली खुराक (35-40 किग्रा/एकड़) पहली सिंचाई (20-25 दिन) पर और दूसरी खुराक कल्ले फूटते समय दें।\n\n"
+                    "3. **पर्णीय पोषण (Foliar Spray) व नैनो यूरिया:**\n"
+                    "   - वनस्पति वृद्धि के समय 4 मिली/लीटर नैनो यूरिया या 19:19:19 (NPK) का 10 ग्राम/लीटर की दर से छिड़काव करें।\n"
+                    "   - मिट्टी की जैविक उर्वरता बनाए रखने हेतु प्रति एकड़ 2-3 टन अच्छी सड़ी गोबर खाद या वर्मीकम्पोस्ट अवश्य डालें।"
+                )
+            return (
+                "Scientific Balanced Plant Nutrition (NPK) Schedule:\n\n"
+                "1. **Basal Application (At Sowing):**\n"
+                "   - Apply DAP @ 50 kg/acre + Muriate of Potash (MOP) @ 25 kg/acre and Zinc Sulphate 33% @ 5 kg/acre.\n\n"
+                "2. **Split Top Dressing (Nitrogen / Urea):**\n"
+                "   - Split urea into 2-3 doses. Apply 35-40 kg/acre during first irrigation (Crown Root Initiation stage) and second dose at tillering/branching.\n\n"
+                "3. **Foliar Nutrition & Nano-Urea:**\n"
+                "   - Spray Nano Urea @ 4 ml/L or water-soluble NPK 19:19:19 @ 10 g/L for rapid uptake during active vegetative growth.\n"
+                "   - Incorporate 2-3 tonnes of well-decomposed FYM or vermicompost per acre to enhance organic carbon."
+            )
+
+        # 5. Organic Farming & Vermicompost (जैविक, कम्पोस्ट, वर्मीकम्पोस्ट, जीवामृत, Organic, Compost, Vermicompost, Biofertilizer)
+        if any(o in q_lower for o in ["organic", "jaivik", "compost", "vermicompost", "jeevamrut", "gobar", "जैविक", "कम्पोस्ट", "वर्मीकम्पोस्ट", "जीवामृत", "गोबर"]):
+            if is_hi:
+                return (
+                    "प्राकृतिक एवं जैविक खेती संवर्धन की विस्तृत विधि:\n\n"
+                    "1. **जीवामृत निर्माण:**\n"
+                    "   - 200 लीटर पानी में 10 किग्रा देसी गाय का गोबर + 10 लीटर गोमूत्र + 2 किग्रा गुड़ + 2 किग्रा बेसन + मुट्ठी भर खेत की सजीव मिट्टी मिलाकर 48 घंटे छाया में रखें।\n"
+                    "   - प्रति एकड़ सिंचाई के साथ अथवा 10% घोल बनाकर छिड़काव करें।\n\n"
+                    "2. **वर्मीकम्पोस्ट प्रयोग:**\n"
+                    "   - फसल बुवाई से पूर्व 1.5 से 2 टन वर्मीकम्पोस्ट प्रति एकड़ खेत में मिलाने से मिट्टी की जलधारण क्षमता और जीवांश कार्बन में भारी वृद्धि होती है।\n\n"
+                    "3. **बायो-फर्टिलाइजर:** एजोटोबैक्टर व पीएसबी (PSB) कल्चर से बीजोपचार करने से 20-25% रासायनिक उर्वरक की बचत होती है।"
+                )
+            return (
+                "Sustainable Organic Farming & Bio-Fertilizer Protocol:\n\n"
+                "1. **Jeevamrit Preparation:**\n"
+                "   - Mix 10 kg indigenous cow dung + 10 L cow urine + 2 kg jaggery + 2 kg pulse flour + handful of fertile soil in 200 L water. Ferment for 48 hours in shade and apply with irrigation.\n\n"
+                "2. **Vermicompost Application:**\n"
+                "   - Incorporate 1.5 - 2 tonnes of vermicompost per acre during field preparation to enhance microbial activity and soil moisture retention.\n\n"
+                "3. **Bio-Inoculants:** Use Azotobacter/Rhizobium and PSB (Phosphate Solubilizing Bacteria) seed coatings to reduce chemical input requirements by 20-25%."
+            )
+
+        # 6. General Farming Advice Fallback
         if is_hi:
-            return "मैं आपकी सहायता के लिए तैयार हूँ। आप मौसम, मिट्टी की नमी, फसल पहचान या खेती की सलाह के बारे में पूछ सकते हैं।"
-        return "I am here to assist you. You can ask about weather, soil moisture, crop health, or farming recommendations."
+            return (
+                "कृषिनेत्र कृषि सलाहकार केंद्र:\n\n"
+                "आप मुझसे फसल की बुवाई, सिंचाई चक्र, संतुलित खाद (NPK), कीट-रोग रोकथाम, मौसम पूर्वानुमान अथवा उपग्रह आधारित मिट्टी नमी विश्लेषण से संबंधित कोई भी विस्तृत जानकारी ले सकते हैं। कृपया अपनी फसल का नाम व समस्या बताएं।"
+            )
+        return (
+            "KrishiNetra Agricultural Intelligence Hub:\n\n"
+            "You can ask for in-depth agronomic advice regarding crop sowing, irrigation scheduling, balanced fertilization (NPK), pest/disease remedies, weather forecasting, or satellite soil moisture analysis. Please mention your specific crop or farming question."
+        )
 
     def _heuristic_response(self, tool_name: str, tool_data: Dict[str, Any], language: str) -> str:
         """
